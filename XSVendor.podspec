@@ -7,7 +7,7 @@ Pod::Spec.new do |spec|
   spec.summary      = "XSVendor"
 
   spec.description  = <<-DESC
-  						小工具
+  						常用小方法集合，每个类都是独立的。
                    DESC
 
   spec.homepage     = "https://github.com/westfourth/XSVendor"
