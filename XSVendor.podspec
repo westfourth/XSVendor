@@ -10,12 +10,12 @@ Pod::Spec.new do |spec|
   						小工具
                    DESC
 
-  spec.homepage     = "http://XXX/XSVendor"
+  spec.homepage     = "https://github.com/westfourth/XSVendor"
   spec.license      = "MIT"
-  spec.author             = { "雅各" => "jaco574093@gmail.com" }
+  spec.author             = { "westfourth" => "xisixisi@gmail.com" }
 
-  spec.platform     = :ios, "10.0"
-  spec.source       = { :git => "http://XXX/XSVendor.git" }
+  spec.platform     = :ios, "11.0"
+  spec.source       = { :git => "https://github.com/westfourth/XSVendor.git" }
 
   spec.source_files  = "*.{h,m}"
 

@@ -20,7 +20,8 @@
             ((void (*)(__kindof UIScrollView*, SEL))imp0)(scrollView, sel);
             UIView *view = [scrollView viewForState:scrollView.state];
             if (view) {
-                view.frame = (CGRect){.size = scrollView.bounds.size};
+                CGSize size = scrollView.bounds.size;
+                view.frame = CGRectMake(0, -scrollView.adjustedContentInset.top, size.width, size.height);
                 [scrollView sendSubviewToBack:view];
             }
         });
