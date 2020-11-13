@@ -6,6 +6,8 @@
 //
 
 #import "XSIndicatorSegmentedControl.h"
+#import <objc/runtime.h>
+#import <objc/message.h>
 
 @implementation XSIndicatorSegmentedControl
 
@@ -44,13 +46,37 @@
         return;
     }
     
+    _indicatorView.frame = [self indicatorFrameForIndex:self.selectedSegmentIndex];
+    _indicatorView.layer.cornerRadius = CGRectGetHeight(_indicatorView.bounds) / 2;
+}
+
+- (CGRect)indicatorFrameForIndex:(NSUInteger)index {
+    NSArray *subViews = self.subviews;
+    
     CGSize size = _indicatorViewSize;
     //  选中segment左边总宽度
     CGFloat avgWidth = CGRectGetWidth(self.bounds) / (self.numberOfSegments == 0 ? 1 : self.numberOfSegments);
     
-    _indicatorView.frame = CGRectMake(avgWidth * self.selectedSegmentIndex + (avgWidth - size.width) / 2, CGRectGetHeight(self.bounds) - size.height, size.width, size.height);
+    CGRect frame = CGRectMake(avgWidth * index + (avgWidth - size.width) / 2, CGRectGetHeight(self.bounds) - size.height, size.width, size.height);
+    return frame;
+}
+
+- (void)_setSelectedSegmentIndex:(NSInteger)index notify:(BOOL)notify animate:(BOOL)animate {
+    void (^block)(BOOL) = ^(BOOL finished){
+        struct objc_super s;
+        s.receiver = self;
+        s.super_class = [UISegmentedControl class];
+        SEL sel = _cmd;
+        ((void (*)(struct objc_super *, SEL, NSInteger, BOOL, BOOL))objc_msgSendSuper)(&s, sel, index, notify, animate);
+    };
     
-    _indicatorView.layer.cornerRadius = CGRectGetHeight(_indicatorView.bounds) / 2;
+    if (!_indicatorViewAnimated) {      //  非动画
+        block(YES);
+    } else {                            //  动画
+        [UIView animateWithDuration:0.25 animations:^{
+            _indicatorView.frame = [self indicatorFrameForIndex:index];
+        } completion:block];
+    }
 }
 
 //MARK:-    自定义初始化
@@ -59,6 +85,7 @@
     [self changeDefaultSetting];
     //
     _indicatorViewSize = CGSizeMake(40, 3);
+    _indicatorViewAnimated = YES;
     //
     _indicatorView = [UIView new];
     [self addSubview:_indicatorView];
